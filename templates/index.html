@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Valentine's Day 💝</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Quicksand:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    /* ───── Reset & Root ───── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --rose:       #e84a6a;
+      --rose-dark:  #c43558;
+      --rose-light:#f7a5b5;
+      --cream:      #fff5f6;
+      --blush:      #fde8ec;
+      --text:       #5a2d3e;
+      --shadow:     rgba(200, 50, 90, 0.25);
+    }
+
+    /* ───── Body & Background ───── */
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--cream);
+      font-family: 'Quicksand', sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ───── Floating Hearts Background ───── */
+    .hearts-bg {
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .heart-float {
+      position: absolute;
+      opacity: 0;
+      animation: floatUp linear infinite;
+    }
+    .heart-float svg { width: 100%; height: 100%; }
+
+    @keyframes floatUp {
+      0%   { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10%  { opacity: 0.6; }
+      90%  { opacity: 0.6; }
+      100% { transform: translateY(-120px) rotate(360deg); opacity: 0; }
+    }
+
+    /* ───── Card Container ───── */
+    .card {
+      position: relative;
+      z-index: 1;
+      background: #fff;
+      border-radius: 28px;
+      box-shadow: 0 20px 60px var(--shadow);
+      padding: 56px 48px 48px;
+      max-width: 480px;
+      width: 90%;
+      text-align: center;
+      animation: cardPop 0.6s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes cardPop {
+      0%   { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1);   opacity: 1; }
+    }
+
+    /* ───── Heart Icon on Card ───── */
+    .card-heart {
+      width: 72px; height: 72px;
+      margin: 0 auto 20px;
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50%      { transform: scale(1.15); }
+    }
+
+    /* ───── Typography ───── */
+    .card h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-style: italic;
+      color: var(--rose);
+      margin-bottom: 18px;
+      line-height: 1.3;
+    }
+    .card .message {
+      font-size: 1.05rem;
+      color: var(--text);
+      line-height: 1.7;
+      margin-bottom: 36px;
+    }
+
+    /* ───── Divider ───── */
+    .divider {
+      width: 60px; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--rose-light), transparent);
+      margin: 0 auto 36px;
+    }
+
+    /* ───── Buttons ───── */
+    .btn-row {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      position: relative;
+      min-height: 54px;
+    }
+
+    .btn {
+      padding: 14px 36px;
+      border: none;
+      border-radius: 50px;
+      font-family: 'Quicksand', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      letter-spacing: 0.5px;
+      user-select: none;
+    }
+
+    .btn-yes {
+      background: linear-gradient(135deg, var(--rose), var(--rose-dark));
+      color: #fff;
+      box-shadow: 0 6px 20px var(--shadow);
+    }
+    .btn-yes:hover { transform: translateY(-2px); box-shadow: 0 8px 28px var(--shadow); }
+    .btn-yes:active { transform: translateY(0); }
+
+    .btn-no {
+      background: var(--blush);
+      color: var(--rose-dark);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: background 0.2s;
+    }
+    .btn-no:hover { background: #f5d0d8; }
+
+    /* Clone that dances around the screen */
+    #btnNoClone {
+      position: fixed;
+      z-index: 50;
+      display: none;                          /* hidden until first hover */
+      transition: left 0.25s cubic-bezier(0.25,0.46,0.45,0.94),
+                  top  0.25s cubic-bezier(0.25,0.46,0.45,0.94);
+                  /* smooth, slightly springy glide */
+    }
+
+    /* ───── Congratulations Overlay ───── */
+    .congrats-overlay {
+      position: fixed; inset: 0;
+      background: rgba(232, 74, 106, 0.15);
+      backdrop-filter: blur(6px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    .congrats-overlay.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .congrats-card {
+      background: #fff;
+      border-radius: 28px;
+      box-shadow: 0 24px 70px rgba(200,50,90,0.3);
+      padding: 60px 48px;
+      max-width: 420px;
+      width: 90%;
+      text-align: center;
+      transform: scale(0.85);
+      transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .congrats-overlay.show .congrats-card { transform: scale(1); }
+
+    .congrats-card .big-heart {
+      width: 90px; height: 90px;
+      margin: 0 auto 24px;
+      animation: pulse 1s ease-in-out infinite;
+    }
+    .congrats-card h2 {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 2.1rem;
+      color: var(--rose);
+      margin-bottom: 14px;
+    }
+    .congrats-card p {
+      color: var(--text);
+      font-size: 1.05rem;
+      line-height: 1.7;
+    }
+
+    /* ───── Confetti Burst ───── */
+    .confetti-piece {
+      position: fixed;
+      width: 10px; height: 10px;
+      border-radius: 2px;
+      pointer-events: none;
+      z-index: 101;
+      animation: confettiFall 2s ease-out forwards;
+    }
+    @keyframes confettiFall {
+      0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(600px) rotate(720deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating hearts background -->
+  <div class="hearts-bg" id="heartsBg"></div>
+
+  <!-- Main Card -->
+  <div class="card" id="mainCard">
+    <svg class="card-heart" viewBox="0 0 24 24" fill="var(--rose)">
+      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+    </svg>
+    <h1>Will you be my Valentine? 💕</h1>
+    <div class="divider"></div>
+    <p class="message">
+      You are my sunshine, my only sunshine.<br>
+      Every moment with you is a moment I treasure.<br>
+      So, my dearest, will you be mine this Valentine's Day? 🌹
+    </p>
+    <div class="btn-row" id="btnRow">
+      <button class="btn btn-yes" onclick="onYes()">Yes! 💝</button>
+      <button class="btn btn-no"  id="btnNo">No</button>
+    </div>
+  </div>
+
+  <!-- This is the clone that flies around the viewport -->
+  <button class="btn btn-no" id="btnNoClone">No</button>
+
+  <!-- Congratulations Overlay -->
+  <div class="congrats-overlay" id="congratsOverlay">
+    <div class="congrats-card">
+      <svg class="big-heart" viewBox="0 0 24 24" fill="var(--rose)">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+      </svg>
+      <h2>Yay! 🎉</h2>
+      <p>You said yes!<br>I can't wait to spend this Valentine's Day with you.<br>You are my everything. ❤️</p>
+    </div>
+  </div>
+
+  <script>
+  // ════════════════════════════════════════
+  //  FLOATING HEARTS BACKGROUND
+  // ════════════════════════════════════════
+  (function spawnHearts() {
+    const container = document.getElementById('heartsBg');
+    const heartSVG = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+    const colors = ['#e84a6a','#f7a5b5','#c43558','#fde8ec','#ff7aa2'];
+
+    for (let i = 0; i < 18; i++) {
+      const el = document.createElement('div');
+      el.className = 'heart-float';
+      const size = 18 + Math.random() * 30;
+      el.style.width  = size + 'px';
+      el.style.height = size + 'px';
+      el.style.left   = Math.random() * 100 + 'vw';
+      el.style.animationDuration = (6 + Math.random() * 10) + 's';
+      el.style.animationDelay    = (Math.random() * 8) + 's';
+      el.style.color = colors[Math.floor(Math.random() * colors.length)];
+      el.innerHTML = heartSVG;
+      container.appendChild(el);
+    }
+  })();
+
+  // ════════════════════════════════════════
+  //  DANCING "NO" BUTTON  (viewport-fixed clone)
+  // ════════════════════════════════════════
+  (function () {
+    const btnNoOriginal = document.getElementById('btnNo');
+    const clone         = document.getElementById('btnNoClone');
+    let dancing         = false;   // becomes true after first hover on original
+    let cx = 0, cy = 0;            // current clone centre (viewport px)
+
+    // ── helper: clamp a value between min and max ──
+    function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+    // ── place clone exactly over the original so the swap is seamless ──
+    function syncToOriginal() {
+      const r  = btnNoOriginal.getBoundingClientRect();
+      cx = r.left + r.width  / 2;
+      cy = r.top  + r.height / 2;
+      applyPos();
+    }
+
+    // ── write current (cx,cy) to the clone's style ──
+    function applyPos() {
+      clone.style.left = (cx - clone.offsetWidth  / 2) + 'px';
+      clone.style.top  = (cy - clone.offsetHeight / 2) + 'px';
+    }
+
+    // ── kick off: on first mouseover of the real button ──
+    btnNoOriginal.addEventListener('mouseenter', function () {
+      if (dancing) return;
+      dancing = true;
+
+      // 1. Snapshot position so the clone appears exactly on top
+      syncToOriginal();
+      clone.style.transition = 'none';          // no transition for the first frame
+      clone.style.display    = 'block';
+      btnNoOriginal.style.visibility = 'hidden'; // hide original (layout space kept)
+
+      // 2. One frame later re-enable the smooth transition
+      requestAnimationFrame(() => {
+        clone.style.transition =
+          'left 0.25s cubic-bezier(0.25,0.46,0.45,0.94), ' +
+          'top  0.25s cubic-bezier(0.25,0.46,0.45,0.94)';
+      });
+    });
+
+    // ── continuous dance: push clone AWAY from mouse every mousemove ──
+    document.addEventListener('mousemove', function (e) {
+      if (!dancing) return;
+
+      const mx = e.clientX;
+      const my = e.clientY;
+
+      // vector from mouse → clone centre
+      let dx = cx - mx;
+      let dy = cy - my;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      // only push when mouse is close enough (repulsion radius)
+      const RADIUS = 140;
+      if (dist < RADIUS && dist > 0) {
+        // normalise and scale the push (stronger when closer)
+        const force = (RADIUS - dist) / RADIUS * 160;
+        dx = (dx / dist) * force;
+        dy = (dy / dist) * force;
+
+        cx += dx;
+        cy += dy;
+
+        // clamp inside viewport with some padding
+        const pad = 20;
+        cx = clamp(cx, clone.offsetWidth  / 2 + pad, window.innerWidth  - clone.offsetWidth  / 2 - pad);
+        cy = clamp(cy, clone.offsetHeight / 2 + pad, window.innerHeight - clone.offsetHeight / 2 - pad);
+
+        applyPos();
+      }
+    });
+
+  })();  // end dancing IIFE
+
+  // ════════════════════════════════════════
+  //  YES BUTTON → CONGRATS
+  // ════════════════════════════════════════
+  function onYes() {
+    // Hide the card gently
+    const card = document.getElementById('mainCard');
+    card.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+    card.style.transform  = 'scale(0.9)';
+    card.style.opacity    = '0';
+
+    // Confetti burst
+    spawnConfetti();
+
+    // Show congrats after a tick
+    setTimeout(() => {
+      document.getElementById('congratsOverlay').classList.add('show');
+    }, 350);
+  }
+
+  // ════════════════════════════════════════
+  //  CONFETTI
+  // ════════════════════════════════════════
+  function spawnConfetti() {
+    const colors = ['#e84a6a','#f7a5b5','#ffd700','#c43558','#ff7aa2','#fff','#ffb6c1'];
+    for (let i = 0; i < 60; i++) {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.left = (20 + Math.random() * 60) + 'vw';
+      el.style.top  = (Math.random() * 30) + 'vh';
+      el.style.background = colors[Math.floor(Math.random() * colors.length)];
+      el.style.width  = (6 + Math.random() * 8) + 'px';
+      el.style.height = (6 + Math.random() * 8) + 'px';
+      el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      el.style.animationDelay = (Math.random() * 0.4) + 's';
+      el.style.animationDuration = (1.5 + Math.random() * 1.2) + 's';
+      document.body.appendChild(el);
+    }
+  }
+  </script>
+</body>
+</html>
